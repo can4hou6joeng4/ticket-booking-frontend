@@ -1,0 +1,140 @@
+{
+    "common": {
+        "welcome": "Welcome",
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "profile": "Profile",
+        "loading": "Loading...",
+        "success": "Operation successful",
+        "error": "Operation failed",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "create": "Create",
+        "update": "Update",
+        "view": "View",
+        "actions": "Actions",
+        "language": "Language Settings",
+        "timezone": "Timezone Settings",
+        "energetic": "Today is another energetic day!",
+        "user": "User"
+    },
+    "home": {
+        "title": "Ticketing System",
+        "adminConsole": "Admin Console",
+        "userPlatform": "User Platform",
+        "welcomeMessage": "Good morning, {{name}}! Another energetic day!",
+        "weatherInfo": "Today: Cloudy to Sunny, 20°C - 25°C",
+        "stats": {
+            "eventCount": "Events",
+            "pendingValidation": "Pending"
+        },
+        "statistics": {
+            "title": "Platform Statistics",
+            "eventCount": "Events",
+            "ticketCount": "Tickets Sold",
+            "validationCount": "Validations"
+        },
+        "features": {
+            "admin": "Management",
+            "user": "Quick Access",
+            "eventManagement": "Event Management",
+            "eventManagementDesc": "Create and manage events",
+            "ticketValidation": "Ticket Validation",
+            "ticketValidationDesc": "Scan QR codes to validate tickets",
+            "stats": "Statistics",
+            "statsDesc": "View sales and participation data",
+            "browseEvents": "Browse Events",
+            "browseEventsDesc": "Check out the latest events",
+            "myTickets": "My Tickets",
+            "myTicketsDesc": "Manage your purchased tickets"
+        },
+        "systemFeatures": {
+            "title": "System Features",
+            "security": "Secure & Reliable",
+            "securityDesc": "Using encryption to protect ticket information",
+            "collaboration": "Collaboration",
+            "collaborationDesc": "Support team management",
+            "global": "Global Support",
+            "globalDesc": "Multi-language and timezone support"
+        }
+    },
+    "layout": {
+        "home": "Home",
+        "events": "Event Management",
+        "tickets": "Ticket Management",
+        "validation": "Ticket Validation",
+        "statistics": "Statistics",
+        "settings": "System Settings",
+        "profile": "Profile",
+        "language": "Language Settings",
+        "timezone": "Timezone Settings",
+        "logout": "Logout",
+        "notifications": "Notifications",
+        "searchPlaceholder": "Search..."
+    },
+    "events": {
+        "title": "Event List",
+        "createEvent": "Create Event",
+        "refreshEvents": "Refresh List",
+        "eventName": "Event Name",
+        "eventTime": "Event Time",
+        "eventLocation": "Event Location",
+        "ticketStatus": "Ticket Status",
+        "ticketsSold": "Sold",
+        "ticketsUsed": "Used",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "editEvent": "Edit Event",
+        "deleteEvent": "Delete Event",
+        "deleteConfirm": "Are you sure you want to delete this event?",
+        "deleteConfirmDesc": "This action cannot be undone, and all sold tickets will be invalidated.",
+        "loadError": "Failed to load event list",
+        "createSuccess": "Event created successfully",
+        "updateSuccess": "Event updated successfully",
+        "deleteSuccess": "Event deleted successfully",
+        "createError": "Failed to create event",
+        "updateError": "Failed to update event",
+        "deleteError": "Failed to delete event",
+        "emptyText": "No events available",
+        "browseAndBuy": "Browse events and buy tickets",
+        "viewDetails": "View Details"
+    },
+    "tickets": {
+        "title": "My Tickets",
+        "loadError": "Failed to load tickets",
+        "empty": "No tickets yet",
+        "browseEvents": "Browse Events",
+        "unknownEvent": "Unknown Event",
+        "unknownTime": "Unknown Time",
+        "unknownLocation": "Unknown Location",
+        "unknown": "Unknown",
+        "ticketId": "Ticket ID",
+        "eventTime": "Event Time",
+        "eventLocation": "Event Location",
+        "purchaseTime": "Purchase Time",
+        "usedTime": "Used Time",
+        "viewTicketCode": "View Ticket Code",
+        "ticketUsed": "Used",
+        "status": {
+            "used": "Used",
+            "unused": "Unused"
+        },
+        "tabs": {
+            "all": "All Tickets",
+            "used": "Used",
+            "unused": "Unused"
+        },
+        "stats": {
+            "total": "Total Tickets",
+            "used": "Used Tickets",
+            "unused": "Unused Tickets"
+        }
+    }
+}

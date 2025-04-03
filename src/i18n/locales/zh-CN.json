@@ -1,0 +1,140 @@
+{
+    "common": {
+        "welcome": "欢迎",
+        "login": "登录",
+        "register": "注册",
+        "logout": "退出登录",
+        "profile": "个人资料",
+        "loading": "加载中...",
+        "success": "操作成功",
+        "error": "操作失败",
+        "confirm": "确认",
+        "cancel": "取消",
+        "save": "保存",
+        "edit": "编辑",
+        "delete": "删除",
+        "search": "搜索",
+        "filter": "筛选",
+        "sort": "排序",
+        "create": "创建",
+        "update": "更新",
+        "view": "查看",
+        "actions": "操作",
+        "language": "语言设置",
+        "timezone": "时区设置",
+        "energetic": "今天又是充满活力的一天!",
+        "user": "用户"
+    },
+    "home": {
+        "title": "票务系统",
+        "adminConsole": "管理员控制台",
+        "userPlatform": "用户服务平台",
+        "welcomeMessage": "早安，{{name}}，今天又是充满活力的一天！",
+        "weatherInfo": "今日多云转晴，20°C - 25°C",
+        "stats": {
+            "eventCount": "活动数",
+            "pendingValidation": "待核销"
+        },
+        "statistics": {
+            "title": "平台数据",
+            "eventCount": "活动数量",
+            "ticketCount": "票券销量",
+            "validationCount": "验票次数"
+        },
+        "features": {
+            "admin": "管理功能",
+            "user": "快捷功能",
+            "eventManagement": "活动管理",
+            "eventManagementDesc": "创建和管理活动信息",
+            "ticketValidation": "票券验证",
+            "ticketValidationDesc": "扫码验证电子票券",
+            "stats": "数据统计",
+            "statsDesc": "查看销售和参与数据",
+            "browseEvents": "浏览活动",
+            "browseEventsDesc": "查看最新活动信息",
+            "myTickets": "我的票券",
+            "myTicketsDesc": "管理已购票券"
+        },
+        "systemFeatures": {
+            "title": "系统特点",
+            "security": "安全可靠",
+            "securityDesc": "采用加密技术保护票券信息",
+            "collaboration": "多人协作",
+            "collaborationDesc": "支持团队协同管理",
+            "global": "全球化支持",
+            "globalDesc": "多语言和时区支持"
+        }
+    },
+    "layout": {
+        "home": "首页",
+        "events": "活动管理",
+        "tickets": "票券管理",
+        "validation": "票券验证",
+        "statistics": "数据统计",
+        "settings": "系统设置",
+        "profile": "个人资料",
+        "language": "语言设置",
+        "timezone": "时区设置",
+        "logout": "退出登录",
+        "notifications": "通知",
+        "searchPlaceholder": "搜索..."
+    },
+    "events": {
+        "title": "活动列表",
+        "createEvent": "创建活动",
+        "refreshEvents": "刷新列表",
+        "eventName": "活动名称",
+        "eventTime": "活动时间",
+        "eventLocation": "活动地点",
+        "ticketStatus": "票券情况",
+        "ticketsSold": "已售出",
+        "ticketsUsed": "已入场",
+        "actions": "操作",
+        "viewDetails": "查看详情",
+        "editEvent": "编辑活动",
+        "deleteEvent": "删除活动",
+        "deleteConfirm": "确定删除此活动吗？",
+        "deleteConfirmDesc": "删除后将无法恢复，已售出的票券也会失效。",
+        "loadError": "获取活动列表失败",
+        "createSuccess": "活动创建成功",
+        "updateSuccess": "活动更新成功",
+        "deleteSuccess": "活动删除成功",
+        "createError": "创建活动失败",
+        "updateError": "更新活动失败",
+        "deleteError": "删除活动失败",
+        "emptyText": "暂无活动信息",
+        "browseAndBuy": "浏览活动并购票",
+        "viewDetails": "查看详情"
+    },
+    "tickets": {
+        "title": "我的票券",
+        "loadError": "加载票券失败",
+        "empty": "暂无票券",
+        "browseEvents": "浏览活动",
+        "unknownEvent": "未知活动",
+        "unknownTime": "未知时间",
+        "unknownLocation": "未知地点",
+        "unknown": "未知",
+        "ticketId": "票券编号",
+        "eventTime": "活动时间",
+        "eventLocation": "活动地点",
+        "purchaseTime": "购买时间",
+        "usedTime": "使用时间",
+        "viewTicketCode": "查看票券码",
+        "ticketUsed": "已使用",
+        "status": {
+            "used": "已使用",
+            "unused": "未使用"
+        },
+        "tabs": {
+            "all": "全部票券",
+            "used": "已使用",
+            "unused": "未使用"
+        },
+        "stats": {
+            "total": "总票券",
+            "used": "已使用",
+            "unused": "未使用"
+        }
+    }
+}
