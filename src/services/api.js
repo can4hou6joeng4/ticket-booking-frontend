@@ -92,25 +92,23 @@ export const authAPI = {
             const response = await api.post('/auth/login', credentials);
             console.log('登录响应原始数据:', response);
 
-            // 处理登录成功的情况
             if (response.status === 'success' && response.data) {
-                // 保存token和用户信息到本地存储
-                const token = response.data.token;
-                const user = response.data.user;
-
-                if (token) {
+                const { token, user } = response.data;
+                if (token && user) {
                     localStorage.setItem('token', token);
-                    if (user) {
-                        localStorage.setItem('user', JSON.stringify(user));
-                        console.log('用户信息已保存到本地存储');
-                    }
+                    localStorage.setItem('user', JSON.stringify(user));
+                    console.log('用户信息已保存到本地存储');
                     return response;
                 }
             }
 
-            throw new Error(response.message || '登录失败');
+            // 如果响应不符合预期格式，抛出错误
+            throw new Error(response.message || '登录失败：服务器响应格式不正确');
         } catch (error) {
             console.error('登录API错误:', error);
+            if (error.response?.data?.message) {
+                error.friendlyMessage = error.response.data.message;
+            }
             throw error;
         }
     },

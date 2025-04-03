@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/AuthContext';
 import MainLayout from './components/Layout/MainLayout';
@@ -13,6 +14,9 @@ import TicketList from './pages/TicketList';
 import TicketDetail from './pages/TicketDetail';
 import TicketValidation from './pages/TicketValidation';
 import StatisticsPage from './pages/StatisticsPage';
+import './i18n';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
 
 // 管理员路由守卫
 const AdminRoute = ({ children }) => {
@@ -50,17 +54,9 @@ const AppRoutes = () => {
                     <Route path="/events" element={<EventList />} />
                     <Route path="/events/:eventId" element={<EventDetail />} />
 
-                    {/* 用户专属路由 */}
-                    <Route path="/tickets" element={
-                        <UserRoute>
-                            <TicketList />
-                        </UserRoute>
-                    } />
-                    <Route path="/tickets/:ticketId" element={
-                        <UserRoute>
-                            <TicketDetail />
-                        </UserRoute>
-                    } />
+                    {/* 票券管理页面对所有登录用户可见 */}
+                    <Route path="/tickets" element={<TicketList />} />
+                    <Route path="/tickets/:ticketId" element={<TicketDetail />} />
 
                     {/* 管理员专属路由 */}
                     <Route path="/validate" element={
@@ -85,9 +81,21 @@ const AppRoutes = () => {
 const App = () => {
     return (
         <Router>
-            <AuthProvider>
-                <AppRoutes />
-            </AuthProvider>
+            <ThemeProvider>
+                <AuthProvider>
+                    <ConfigProvider
+                        locale={zhCN}
+                        theme={{
+                            token: {
+                                colorPrimary: '#1677ff',
+                                borderRadius: 6,
+                            },
+                        }}
+                    >
+                        <AppRoutes />
+                    </ConfigProvider>
+                </AuthProvider>
+            </ThemeProvider>
         </Router>
     );
 };

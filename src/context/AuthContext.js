@@ -33,16 +33,10 @@ export const AuthProvider = ({ children }) => {
             const response = await authAPI.login(credentials);
             console.log('AuthContext login 响应:', response);
 
-            // 检查用户数据是否已设置
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                try {
-                    const parsedUser = JSON.parse(storedUser);
-                    setUser(parsedUser);
-                    console.log('用户状态已设置:', parsedUser);
-                } catch (error) {
-                    console.error('解析用户数据失败:', error);
-                }
+            if (response.status === 'success' && response.data) {
+                const { user } = response.data;
+                setUser(user);
+                console.log('用户状态已设置:', user);
             }
 
             return response;
@@ -86,7 +80,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        isAdmin: user?.role === 'admin'
+        isAdmin: user?.role === 'manager'
     };
 
     return (

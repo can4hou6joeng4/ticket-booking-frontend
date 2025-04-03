@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, Typography, Space, message, Drawer } from 'antd';
+import { Layout, Menu, Button, Avatar, Dropdown, Typography, Space, message, Drawer, Switch } from 'antd';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
   HomeOutlined,
@@ -14,9 +14,12 @@ import {
   BarChartOutlined,
   SettingOutlined,
   TranslationOutlined,
-  MenuOutlined
+  MenuOutlined,
+  BulbOutlined,
+  BulbFilled
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { ConfigProvider } from 'antd';
@@ -30,15 +33,23 @@ const { Text } = Typography;
 // 样式定义
 const StyledLayout = styled(Layout)`
   min-height: 100vh;
-  background: #f5f5f5;
+  background: ${props => props.theme === 'dark' ? '#141414' : '#f5f5f5'};
+
+  .ant-layout {
+    background: ${props => props.theme === 'dark' ? '#141414' : '#f5f5f5'};
+  }
 `;
 
 const StyledSider = styled(Sider)`
-  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
-  background: #fff;
+  background: ${props => props.theme === 'dark' ? '#1f1f1f' : '#fff'} !important;
+  
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
+  }
+  
+  .ant-menu {
+    background: ${props => props.theme === 'dark' ? '#1f1f1f' : '#fff'};
   }
   
   @media (max-width: 768px) {
@@ -62,7 +73,7 @@ const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid ${props => props.theme === 'dark' ? '#303030' : '#f0f0f0'};
 `;
 
 const Logo = styled.div`
@@ -78,13 +89,12 @@ const Logo = styled.div`
 `;
 
 const StyledHeader = styled(Header)`
-  background: #fff;
+  background: ${props => props.theme === 'dark' ? '#1f1f1f' : '#fff'};
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  border-bottom: 1px solid #f0f0f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `;
 
@@ -125,7 +135,6 @@ const DesktopMenuButton = styled(Button)`
 
 const StyledContent = styled(Content)`
   margin: 24px;
-  background: #fff;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -192,6 +201,13 @@ const RoleTag = styled.span`
   }
 `;
 
+const ThemeButton = styled(Button)`
+  margin-right: 8px;
+  &:hover {
+    color: #1677ff;
+  }
+`;
+
 // 语言和Antd的LocaleProvider映射
 const antdLocales = {
   'zh-CN': zhCN,
@@ -222,6 +238,7 @@ const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const isAdmin = user && user.role === 'admin';
@@ -291,23 +308,29 @@ const MainLayout = () => {
     closeMobileDrawer();
   }, [navigate]);
 
-  const userMenu = [
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: t('个人中心'),
+      onClick: () => navigate('/profile')
+    },
     {
       key: 'language',
-      label: t('layout.language'),
       icon: <TranslationOutlined />,
-      children: languages.map(lang => ({
-        key: `lang-${lang.value}`,
-        label: lang.label,
-        onClick: () => handleLanguageChange(lang.value),
-      })),
+      label: t('语言'),
+      children: [
+        { key: 'zh-CN', label: '简体中文' },
+        { key: 'en-US', label: 'English' },
+        { key: 'zh-TW', label: '繁體中文' }
+      ]
     },
     {
       key: 'logout',
-      label: t('layout.logout'),
       icon: <LogoutOutlined />,
-      onClick: handleLogout,
-    },
+      label: t('退出登录'),
+      onClick: handleLogout
+    }
   ];
 
   // 管理员侧边栏菜单
@@ -370,20 +393,21 @@ const MainLayout = () => {
 
   return (
     <ConfigProvider locale={antdLocales[language]}>
-      <StyledLayout>
+      <StyledLayout theme={theme}>
         <StyledSider
+          theme={theme}
           trigger={null}
           collapsible
           collapsed={collapsed}
           width={256}
         >
-          <LogoContainer>
+          <LogoContainer theme={theme}>
             <Logo collapsed={collapsed}>
               {!collapsed ? t('home.title') : 'TMS'}
             </Logo>
           </LogoContainer>
           <Menu
-            theme="light"
+            theme={theme}
             mode="inline"
             defaultSelectedKeys={['/']}
             selectedKeys={[location.pathname]}
@@ -400,7 +424,7 @@ const MainLayout = () => {
           width={250}
         >
           <Menu
-            theme="light"
+            theme={theme}
             mode="inline"
             defaultSelectedKeys={['/']}
             selectedKeys={[location.pathname]}
@@ -409,7 +433,7 @@ const MainLayout = () => {
         </MobileDrawer>
 
         <Layout>
-          <StyledHeader>
+          <StyledHeader theme={theme}>
             <HeaderLeft>
               <MobileMenuButton
                 type="text"
@@ -421,29 +445,40 @@ const MainLayout = () => {
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
               />
-              <DateDisplay type="secondary" style={{ marginLeft: 16 }}>
+              <DateDisplay>
                 {formatDate(currentTime)}
               </DateDisplay>
             </HeaderLeft>
 
             <HeaderRight>
+              <ThemeButton
+                type="text"
+                icon={theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
+                onClick={toggleTheme}
+              />
               <Dropdown
-                menu={{ items: userMenu }}
+                menu={{
+                  items: userMenuItems,
+                  onClick: ({ key }) => {
+                    if (key === 'language') return;
+                    if (key.startsWith('zh-') || key.startsWith('en-')) {
+                      handleLanguageChange(key);
+                    }
+                  }
+                }}
                 placement="bottomRight"
-                arrow
+                trigger={['click']}
               >
                 <UserInfo>
                   <UserAvatar icon={<UserOutlined />} />
-                  <Space direction="vertical" size={0} style={{ lineHeight: 1.2 }}>
-                    <UserName strong>{user?.email?.split('@')[0]}</UserName>
-                    <RoleTag>{isAdmin ? t('home.adminConsole') : t('home.userPlatform')}</RoleTag>
-                  </Space>
+                  <UserName>{user?.email?.split('@')[0] || t('未登录')}</UserName>
+                  {isAdmin && <RoleTag>{t('管理员')}</RoleTag>}
                 </UserInfo>
               </Dropdown>
             </HeaderRight>
           </StyledHeader>
 
-          <StyledContent>
+          <StyledContent theme={theme}>
             <Outlet />
           </StyledContent>
         </Layout>
