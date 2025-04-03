@@ -65,29 +65,6 @@ const StyledEmpty = styled(Empty)`
   }
 `;
 
-const IconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  background: ${props => props.background};
-  
-  .anticon {
-    font-size: 14px;
-    color: #fff;
-  }
-`;
-
-const InfoText = styled(Text)`
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(0, 0, 0, 0.65);
-`;
-
 const TicketList = () => {
     const { t } = useTranslation();
     const [tickets, setTickets] = useState([]);

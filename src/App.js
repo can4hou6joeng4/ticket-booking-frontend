@@ -26,14 +26,6 @@ const AdminRoute = ({ children }) => {
     return isAdmin ? children : <Navigate to="/" replace />;
 };
 
-// 用户路由守卫 - 确保管理员不会访问用户专属页面
-const UserRoute = ({ children }) => {
-    const { user, isAdmin } = useAuth();
-    console.log('UserRoute - 用户信息:', user);
-    console.log('UserRoute - 是否管理员:', isAdmin);
-    return !isAdmin ? children : <Navigate to="/" replace />;
-};
-
 const AppRoutes = () => {
     const { isAdmin, user } = useAuth();
     console.log('AppRoutes - 用户信息:', user);
