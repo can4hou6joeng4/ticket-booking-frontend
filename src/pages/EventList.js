@@ -69,18 +69,26 @@ const EventList = () => {
             const eventData = {
                 ...values,
                 date: values.date.toISOString(),
+                endDate: values.endDate.toISOString(),
             };
 
+            console.log('提交创建活动数据:', eventData);
             const response = await eventAPI.createEvent(eventData);
-            if (response.data.status === 'success') {
+            console.log('创建活动响应:', response);
+
+            // 检查响应是否成功
+            if (response && (response.status === 'success' || (response.data && response.data.status === 'success'))) {
                 message.success(t('events.createSuccess'));
                 setCreateModalVisible(false);
                 form.resetFields();
                 fetchEvents();
+            } else {
+                const errorMsg = response?.message || response?.data?.message || t('events.createError');
+                message.error(errorMsg);
             }
         } catch (error) {
-            message.error(t('events.createError'));
-            console.error('创建活动失败', error);
+            console.error('创建活动发生异常:', error);
+            message.error(error.response?.data?.message || t('events.createError'));
         } finally {
             setSubmitting(false);
         }
@@ -92,17 +100,25 @@ const EventList = () => {
             const eventData = {
                 ...values,
                 date: values.date.toISOString(),
+                endDate: values.endDate.toISOString(),
             };
 
+            console.log('提交编辑活动数据:', eventData);
             const response = await eventAPI.updateEvent(currentEvent.id, eventData);
-            if (response.data.status === 'success') {
+            console.log('编辑活动响应:', response);
+
+            // 检查响应是否成功
+            if (response && (response.status === 'success' || (response.data && response.data.status === 'success'))) {
                 message.success(t('events.updateSuccess'));
                 setEditModalVisible(false);
                 fetchEvents();
+            } else {
+                const errorMsg = response?.message || response?.data?.message || t('events.updateError');
+                message.error(errorMsg);
             }
         } catch (error) {
-            message.error(t('events.updateError'));
-            console.error('更新活动失败', error);
+            console.error('更新活动发生异常:', error);
+            message.error(error.response?.data?.message || t('events.updateError'));
         } finally {
             setSubmitting(false);
         }
@@ -110,14 +126,21 @@ const EventList = () => {
 
     const handleDeleteEvent = async (eventId) => {
         try {
+            console.log('删除活动ID:', eventId);
             const response = await eventAPI.deleteEvent(eventId);
-            if (response.data.status === 'success') {
+            console.log('删除活动响应:', response);
+
+            // 检查响应是否成功
+            if (response && (response.status === 'success' || (response.data && response.data.status === 'success'))) {
                 message.success(t('events.deleteSuccess'));
                 fetchEvents();
+            } else {
+                const errorMsg = response?.message || response?.data?.message || t('events.deleteError');
+                message.error(errorMsg);
             }
         } catch (error) {
-            message.error(t('events.deleteError'));
-            console.error('删除活动失败', error);
+            console.error('删除活动发生异常:', error);
+            message.error(error.response?.data?.message || t('events.deleteError'));
         }
     };
 
@@ -127,6 +150,7 @@ const EventList = () => {
             name: event.name,
             location: event.location,
             date: dayjs(event.date),
+            endDate: event.endDate ? dayjs(event.endDate) : null,
         });
         setEditModalVisible(true);
     };
@@ -143,10 +167,16 @@ const EventList = () => {
             key: 'name',
         },
         {
-            title: t('events.eventTime'),
-            dataIndex: 'date',
-            key: 'date',
-            render: (date) => dayjs(date).format('YYYY-MM-DD HH:mm'),
+            title: t('events.eventTimeRange'),
+            key: 'timeRange',
+            render: (_, record) => (
+                <>
+                    <div>{dayjs(record.date).format('YYYY-MM-DD HH:mm')}</div>
+                    {record.endDate && (
+                        <div>~ {dayjs(record.endDate).format('YYYY-MM-DD HH:mm')}</div>
+                    )}
+                </>
+            ),
             sorter: (a, b) => new Date(a.date) - new Date(b.date),
         },
         {
@@ -287,6 +317,12 @@ const EventList = () => {
                                     <div>
                                         <CalendarOutlined style={{ marginRight: 8 }} />
                                         <Text>{dayjs(event.date).format('YYYY-MM-DD HH:mm')}</Text>
+                                        {event.endDate && (
+                                            <>
+                                                <br />
+                                                <Text style={{ marginLeft: 24 }}>~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</Text>
+                                            </>
+                                        )}
                                     </div>
                                     <div>
                                         <EnvironmentOutlined style={{ marginRight: 8 }} />
@@ -363,6 +399,39 @@ const EventList = () => {
                     >
                         <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} />
                     </Form.Item>
+                    <Form.Item
+                        name="endDate"
+                        label={t('events.eventEndTime')}
+                        rules={[
+                            {
+                                required: true,
+                                message: `${t('events.eventEndTime')}${t('common.required')}`
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || !getFieldValue('date')) {
+                                        return Promise.resolve();
+                                    }
+                                    if (value.isBefore(getFieldValue('date'))) {
+                                        return Promise.reject(new Error(t('events.endTimeError')));
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                        dependencies={['date']}
+                    >
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm"
+                            style={{ width: '100%' }}
+                            placeholder={t('events.eventEndTime')}
+                            disabledDate={(current) => {
+                                const startDate = form.getFieldValue('date');
+                                return startDate && current && current.isBefore(startDate, 'day');
+                            }}
+                        />
+                    </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" loading={submitting} block>
                             {t('events.createEvent')}
@@ -404,6 +473,39 @@ const EventList = () => {
                         rules={[{ required: true, message: t('events.eventTime') }]}
                     >
                         <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="endDate"
+                        label={t('events.eventEndTime')}
+                        rules={[
+                            {
+                                required: true,
+                                message: `${t('events.eventEndTime')}${t('common.required')}`
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || !getFieldValue('date')) {
+                                        return Promise.resolve();
+                                    }
+                                    if (value.isBefore(getFieldValue('date'))) {
+                                        return Promise.reject(new Error(t('events.endTimeError')));
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                        dependencies={['date']}
+                    >
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm"
+                            style={{ width: '100%' }}
+                            placeholder={t('events.eventEndTime')}
+                            disabledDate={(current) => {
+                                const startDate = form.getFieldValue('date');
+                                return startDate && current && current.isBefore(startDate, 'day');
+                            }}
+                        />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" loading={submitting} block>

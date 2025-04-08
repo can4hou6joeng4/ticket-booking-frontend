@@ -4,6 +4,7 @@ import { Card, Button, Typography, Spin, message, Descriptions, Statistic, Row, 
 import { CalendarOutlined, EnvironmentOutlined, ArrowLeftOutlined, TagOutlined } from '@ant-design/icons';
 import { eventAPI, ticketAPI } from '../services/api';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
@@ -14,6 +15,22 @@ const EventDetail = () => {
     const [loading, setLoading] = useState(true);
     const [buyingTicket, setBuyingTicket] = useState(false);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+    const { t } = useTranslation();
+    const [isManager, setIsManager] = useState(false);
+
+    useEffect(() => {
+        // 从本地存储获取用户信息并判断角色
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                setIsManager(user.role === 'manager');
+            } catch (error) {
+                console.error('解析用户信息失败:', error);
+                setIsManager(false);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const fetchEventDetail = async () => {
@@ -39,14 +56,40 @@ const EventDetail = () => {
                 eventId: parseInt(eventId),
             };
 
+            console.log('发送购票请求:', ticketData);
             const response = await ticketAPI.buyTicket(ticketData);
-            if (response.data.status === 'success') {
-                message.success('购票成功！');
+            console.log('购票响应:', response);
+
+            // 检查响应是否成功且包含票券ID
+            if (response && response.status === 'success') {
+                let ticketId;
+
+                // 尝试从不同位置获取票券ID
+                if (response.data && response.data.id) {
+                    ticketId = response.data.id;
+                } else if (response.id) {
+                    ticketId = response.id;
+                }
+
+                message.success(t('events.purchaseSuccess', '购票成功！'));
                 setConfirmModalVisible(false);
-                navigate('/tickets');
+
+                // 如果有票券ID，跳转到票券详情页
+                if (ticketId) {
+                    console.log('跳转到票券详情页:', ticketId);
+                    navigate(`/tickets/${ticketId}`);
+                } else {
+                    // 如果没有获取到票券ID，跳转到票券列表页
+                    console.log('未获取到票券ID，跳转到票券列表页');
+                    navigate('/tickets');
+                }
+            } else {
+                const errorMsg = response?.message || t('events.purchaseError', '购票失败，请稍后再试');
+                message.error(errorMsg);
             }
         } catch (error) {
-            message.error(error.response?.data?.message || '购票失败，请稍后再试');
+            console.error('购票过程中发生异常:', error);
+            message.error(error.response?.data?.message || t('events.purchaseError', '购票失败，请稍后再试'));
         } finally {
             setBuyingTicket(false);
         }
@@ -101,34 +144,42 @@ const EventDetail = () => {
                             </div>
 
                             <Descriptions bordered column={1}>
-                                <Descriptions.Item label="活动时间">
+                                <Descriptions.Item label={t('events.eventTimeRange')}>
                                     <CalendarOutlined style={{ marginRight: 8 }} />
                                     {dayjs(event.date).format('YYYY-MM-DD HH:mm')}
+                                    {event.endDate && (
+                                        <div style={{ marginLeft: 24 }}>
+                                            ~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}
+                                        </div>
+                                    )}
                                 </Descriptions.Item>
-                                <Descriptions.Item label="活动地点">
+                                <Descriptions.Item label={t('events.eventLocation')}>
                                     <EnvironmentOutlined style={{ marginRight: 8 }} />
                                     {event.location}
                                 </Descriptions.Item>
                             </Descriptions>
 
-                            <Divider />
-
-                            <Row gutter={[16, 16]}>
-                                <Col span={12}>
-                                    <Statistic
-                                        title="已售出票数"
-                                        value={event.totalTicketsPurchased}
-                                        prefix={<TagOutlined />}
-                                    />
-                                </Col>
-                                <Col span={12}>
-                                    <Statistic
-                                        title="已入场人数"
-                                        value={event.totalTicketsEntered}
-                                        prefix={<TagOutlined />}
-                                    />
-                                </Col>
-                            </Row>
+                            {isManager && (
+                                <>
+                                    <Divider />
+                                    <Row gutter={[16, 16]}>
+                                        <Col span={12}>
+                                            <Statistic
+                                                title="已售出票数"
+                                                value={event.totalTicketsPurchased}
+                                                prefix={<TagOutlined />}
+                                            />
+                                        </Col>
+                                        <Col span={12}>
+                                            <Statistic
+                                                title="已入场人数"
+                                                value={event.totalTicketsEntered}
+                                                prefix={<TagOutlined />}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </>
+                            )}
 
                             <div style={{ marginTop: 24, textAlign: 'center' }}>
                                 <Button
@@ -146,12 +197,12 @@ const EventDetail = () => {
             </div>
 
             <Modal
-                title="确认购票"
+                title={t('events.confirmPurchase', '确认购票')}
                 open={confirmModalVisible}
                 onCancel={() => setConfirmModalVisible(false)}
                 footer={[
                     <Button key="back" onClick={() => setConfirmModalVisible(false)}>
-                        取消
+                        {t('common.cancel', '取消')}
                     </Button>,
                     <Button
                         key="submit"
@@ -159,13 +210,17 @@ const EventDetail = () => {
                         loading={buyingTicket}
                         onClick={handleBuyTicket}
                     >
-                        确认购票
+                        {t('events.confirmPurchase', '确认购票')}
                     </Button>,
                 ]}
             >
-                <p>您确定要购买 <Text strong>{event.name}</Text> 的门票吗？</p>
-                <p>活动时间: {dayjs(event.date).format('YYYY-MM-DD HH:mm')}</p>
-                <p>活动地点: {event.location}</p>
+                <p>{t('events.confirmPurchaseText', '您确定要购买')} <Text strong>{event.name}</Text> {t('events.confirmPurchaseTicket', '的门票吗？')}</p>
+                <p>{t('events.eventTime')}: {dayjs(event.date).format('YYYY-MM-DD HH:mm')}
+                    {event.endDate && (
+                        <span> ~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</span>
+                    )}
+                </p>
+                <p>{t('events.eventLocation')}: {event.location}</p>
             </Modal>
         </div>
     );

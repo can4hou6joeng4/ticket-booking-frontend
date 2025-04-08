@@ -23,7 +23,8 @@
         "language": "语言设置",
         "timezone": "时区设置",
         "energetic": "今天又是充满活力的一天!",
-        "user": "用户"
+        "user": "用户",
+        "required": "不能为空"
     },
     "home": {
         "title": "票务系统",
@@ -85,12 +86,13 @@
         "refreshEvents": "刷新列表",
         "eventName": "活动名称",
         "eventTime": "活动时间",
+        "eventEndTime": "结束时间",
+        "eventTimeRange": "活动时间范围",
         "eventLocation": "活动地点",
         "ticketStatus": "票券情况",
         "ticketsSold": "已售出",
         "ticketsUsed": "已入场",
         "actions": "操作",
-        "viewDetails": "查看详情",
         "editEvent": "编辑活动",
         "deleteEvent": "删除活动",
         "deleteConfirm": "确定删除此活动吗？",
@@ -104,7 +106,13 @@
         "deleteError": "删除活动失败",
         "emptyText": "暂无活动信息",
         "browseAndBuy": "浏览活动并购票",
-        "viewDetails": "查看详情"
+        "viewDetails": "查看详情",
+        "confirmPurchase": "确认购票",
+        "confirmPurchaseText": "您确定要购买",
+        "confirmPurchaseTicket": "的门票吗？",
+        "endTimeError": "结束时间必须晚于开始时间",
+        "purchaseSuccess": "购票成功！",
+        "purchaseError": "购票失败，请稍后再试"
     },
     "tickets": {
         "title": "我的票券",

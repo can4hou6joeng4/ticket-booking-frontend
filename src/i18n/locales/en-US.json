@@ -23,7 +23,8 @@
         "language": "Language Settings",
         "timezone": "Timezone Settings",
         "energetic": "Today is another energetic day!",
-        "user": "User"
+        "user": "User",
+        "required": " is required"
     },
     "home": {
         "title": "Ticketing System",
@@ -85,6 +86,8 @@
         "refreshEvents": "Refresh List",
         "eventName": "Event Name",
         "eventTime": "Event Time",
+        "eventEndTime": "End Time",
+        "eventTimeRange": "Event Time Range",
         "eventLocation": "Event Location",
         "ticketStatus": "Ticket Status",
         "ticketsSold": "Sold",
@@ -104,7 +107,11 @@
         "deleteError": "Failed to delete event",
         "emptyText": "No events available",
         "browseAndBuy": "Browse events and buy tickets",
-        "viewDetails": "View Details"
+        "viewDetails": "View Details",
+        "confirmPurchase": "Confirm Purchase",
+        "confirmPurchaseText": "Are you sure you want to purchase a ticket for",
+        "confirmPurchaseTicket": "?",
+        "endTimeError": "End time must be later than start time"
     },
     "tickets": {
         "title": "My Tickets",

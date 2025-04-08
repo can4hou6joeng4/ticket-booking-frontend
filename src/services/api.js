@@ -15,11 +15,22 @@ api.interceptors.request.use(
     (config) => {
         // 构建完整的请求URL用于日志
         const fullUrl = `${config.baseURL || ''}${config.url || ''}`;
-        console.log(`请求发送 [${config.method?.toUpperCase()}]: ${fullUrl}`, {
-            headers: config.headers,
-            data: config.data,
-            params: config.params,
-        });
+        const method = config.method?.toUpperCase();
+
+        // 针对购票请求增加特殊日志
+        if (method === 'POST' && config.url === '/ticket') {
+            console.log('🎫 正在发送购票请求:', {
+                url: fullUrl,
+                method,
+                data: config.data,
+            });
+        } else {
+            console.log(`请求发送 [${method}]: ${fullUrl}`, {
+                headers: config.headers,
+                data: config.data,
+                params: config.params,
+            });
+        }
 
         const token = localStorage.getItem('token');
         if (token) {
@@ -39,11 +50,22 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => {
         const fullUrl = `${response.config.baseURL || ''}${response.config.url || ''}`;
-        console.log(`请求成功 [${response.config.method?.toUpperCase()}]: ${fullUrl}`, {
-            status: response.status,
-            statusText: response.statusText,
-            data: response.data,
-        });
+        const method = response.config.method?.toUpperCase();
+
+        // 针对购票响应增加特殊日志
+        if (method === 'POST' && response.config.url === '/ticket') {
+            console.log('🎫 购票请求成功:', {
+                url: fullUrl,
+                status: response.status,
+                data: response.data,
+            });
+        } else {
+            console.log(`请求成功 [${method}]: ${fullUrl}`, {
+                status: response.status,
+                statusText: response.statusText,
+                data: response.data,
+            });
+        }
 
         // 直接返回整个响应数据，让具体的API处理逻辑来处理数据
         return response.data;
@@ -54,7 +76,18 @@ api.interceptors.response.use(
 
         if (error.config) {
             const fullUrl = `${error.config.baseURL || ''}${error.config.url || ''}`;
-            requestInfo = `[${error.config.method?.toUpperCase()}] ${fullUrl}`;
+            const method = error.config.method?.toUpperCase();
+            requestInfo = `[${method}] ${fullUrl}`;
+
+            // 针对购票错误增加特殊日志
+            if (method === 'POST' && error.config.url === '/ticket') {
+                console.error('🎫 购票请求失败:', {
+                    url: fullUrl,
+                    status: error.response?.status,
+                    data: error.response?.data,
+                    error: error.message
+                });
+            }
         }
 
         if (error.response) {
@@ -153,9 +186,60 @@ export const eventAPI = {
             throw error;
         }
     },
-    createEvent: (eventData) => api.post('/event', eventData),
-    updateEvent: (id, eventData) => api.put(`/event/${id}`, eventData),
-    deleteEvent: (id) => api.delete(`/event/${id}`),
+    createEvent: async (eventData) => {
+        try {
+            const response = await api.post('/event', eventData);
+            console.log('创建活动响应:', response);
+            // 如果后端返回的不是标准格式，则手动构造一个标准格式
+            if (response && !response.status) {
+                return {
+                    status: 'success',
+                    message: '活动创建成功',
+                    data: response
+                };
+            }
+            return response;
+        } catch (error) {
+            console.error('创建活动失败:', error);
+            throw error;
+        }
+    },
+    updateEvent: async (id, eventData) => {
+        try {
+            const response = await api.put(`/event/${id}`, eventData);
+            console.log(`更新活动 ${id} 响应:`, response);
+            // 如果后端返回的不是标准格式，则手动构造一个标准格式
+            if (response && !response.status) {
+                return {
+                    status: 'success',
+                    message: '活动更新成功',
+                    data: response
+                };
+            }
+            return response;
+        } catch (error) {
+            console.error(`更新活动 ${id} 失败:`, error);
+            throw error;
+        }
+    },
+    deleteEvent: async (id) => {
+        try {
+            const response = await api.delete(`/event/${id}`);
+            console.log(`删除活动 ${id} 响应:`, response);
+            // 如果后端返回的是空数据或没有status字段，则手动构造一个标准格式
+            if (!response || !response.status) {
+                return {
+                    status: 'success',
+                    message: '活动删除成功',
+                    data: { id }
+                };
+            }
+            return response;
+        } catch (error) {
+            console.error(`删除活动 ${id} 失败:`, error);
+            throw error;
+        }
+    }
 };
 
 // 票务相关API
@@ -193,7 +277,34 @@ export const ticketAPI = {
             throw error;
         }
     },
-    buyTicket: (ticketData) => api.post('/ticket', ticketData),
+    buyTicket: async (ticketData) => {
+        try {
+            const response = await api.post('/ticket', ticketData);
+            console.log('购票响应:', response);
+
+            // 如果后端返回的是标准格式，直接返回
+            if (response && response.status === 'success') {
+                return response;
+            }
+            // 如果后端返回的不是标准格式但包含id，则构造标准格式
+            else if (response && response.id) {
+                return {
+                    status: 'success',
+                    message: '购票成功',
+                    data: {
+                        id: response.id,
+                        eventId: ticketData.eventId,
+                        ...response
+                    }
+                };
+            }
+            // 其他情况，返回原始响应
+            return response;
+        } catch (error) {
+            console.error('购票失败:', error);
+            throw error;
+        }
+    },
     validateTicket: (validationData) => api.post('/ticket/validate', validationData),
 };
 

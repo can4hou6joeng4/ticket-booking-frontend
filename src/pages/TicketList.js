@@ -98,6 +98,11 @@ const TicketList = () => {
         fetchTickets();
     }, [fetchTickets]);
 
+    const handleTabChange = (newTab) => {
+        setActiveTab(newTab);
+        fetchTickets(); // 切换标签时重新获取数据
+    };
+
     const getStatusBadge = (entered) => {
         if (entered) {
             return <Badge status="success" text={<Tag color="green">{t('tickets.status.used')}</Tag>} />;
@@ -246,7 +251,7 @@ const TicketList = () => {
         <TabContainer>
             <Tabs
                 activeKey={activeTab}
-                onChange={setActiveTab}
+                onChange={handleTabChange}
                 items={items}
                 size="middle"
             />
