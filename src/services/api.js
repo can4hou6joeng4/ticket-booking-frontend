@@ -114,9 +114,19 @@ export const authAPI = {
     },
     register: (userData) => api.post('/auth/register', userData),
     profile: () => api.post('/auth/me'),
-    logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    logout: async () => {
+        try {
+            await api.post('/auth/logout');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            return { status: 'success' };
+        } catch (error) {
+            console.error('登出失败:', error);
+            // 即使后端请求失败，也要清除本地存储
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            throw error;
+        }
     }
 };
 

@@ -68,10 +68,16 @@ export const AuthProvider = ({ children }) => {
     };
 
     // 登出方法
-    const logout = () => {
-        authAPI.logout(); // 这会清除本地存储
-        setUser(null);
-        message.success('已退出登录');
+    const logout = async () => {
+        try {
+            await authAPI.logout();
+            setUser(null);
+            message.success('已退出登录');
+        } catch (error) {
+            console.error('退出登录失败:', error);
+            message.error('退出登录失败，但已清除本地登录状态');
+            setUser(null);
+        }
     };
 
     const contextValue = {

@@ -275,9 +275,14 @@ const MainLayout = () => {
     });
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      // 即使退出失败，也导航到登录页面
+      navigate('/login');
+    }
   };
 
   // 语言选项
