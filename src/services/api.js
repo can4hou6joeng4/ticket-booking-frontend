@@ -183,17 +183,6 @@ export const ticketAPI = {
                     console.error('票券数据缺失');
                     throw new Error('票券数据不完整');
                 }
-
-                // 检查票券是否有关联事件信息
-                if (!ticketData.event) {
-                    console.warn(`票券 ${id} 缺少事件信息，将提供默认值`);
-                    ticketData.event = {
-                        name: '未知活动',
-                        date: new Date().toISOString(),
-                        location: '未知地点'
-                    };
-                }
-
                 return response;
             } else {
                 console.error(`获取票券 ${id} 失败:`, response?.message || '未知错误');

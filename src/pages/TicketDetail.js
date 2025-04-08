@@ -19,24 +19,22 @@ const TicketDetail = () => {
             try {
                 setLoading(true);
                 const response = await ticketAPI.getTicket(ticketId);
-                console.log('票券详情数据:', response);
+                console.log('票券详情原始响应:', response);
 
                 if (response && response.status === 'success' && response.data) {
-                    // 确保 ticket 和 ticket.event 都存在
-                    const ticketData = response.data;
-                    if (!ticketData.event) {
-                        console.error('票券数据中缺少事件信息:', ticketData);
-                        ticketData.event = {
-                            name: '未知活动',
-                            date: new Date().toISOString(),
-                            location: '未知地点'
-                        };
-                    }
-                    setTicket(ticketData);
+                    const { qrcode, ticket } = response.data;  // 解构出 qrcode 和 ticket
+                    console.log('完整票券数据:', ticket);
+                    console.log('票券关联的活动数据:', ticket.event);
 
-                    // 设置二维码（如果存在）
-                    if (ticketData.qrcode) {
-                        setQrCode(`data:image/png;base64,${ticketData.qrcode}`);
+                    // 设置完整的票券数据
+                    setTicket({
+                        ...ticket,
+                        qrcode: qrcode
+                    });
+
+                    // 设置二维码
+                    if (qrcode) {
+                        setQrCode(`data:image/png;base64,${qrcode}`);
                     }
                 } else {
                     throw new Error('获取票券详情失败: ' + (response?.message || '未知错误'));
