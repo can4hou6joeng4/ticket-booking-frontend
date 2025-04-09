@@ -86,6 +86,7 @@
         "refreshEvents": "刷新列表",
         "eventName": "活动名称",
         "eventTime": "活动时间",
+        "eventStartTime": "开始时间",
         "eventEndTime": "结束时间",
         "eventTimeRange": "活动时间范围",
         "eventLocation": "活动地点",

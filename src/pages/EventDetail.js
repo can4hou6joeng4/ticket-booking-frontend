@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Typography, Spin, message, Descriptions, Statistic, Row, Col, Modal, Divider } from 'antd';
-import { CalendarOutlined, EnvironmentOutlined, ArrowLeftOutlined, TagOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, TagOutlined, FieldTimeOutlined, ClockCircleOutlined, EnvironmentFilled, CalendarFilled } from '@ant-design/icons';
 import { eventAPI, ticketAPI } from '../services/api';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -97,7 +97,7 @@ const EventDetail = () => {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: 100 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 50 }}>
                 <Spin size="large" />
             </div>
         );
@@ -118,44 +118,122 @@ const EventDetail = () => {
 
     return (
         <div>
-            <Button type="link" icon={<ArrowLeftOutlined />} onClick={() => navigate('/events')}>
-                返回活动列表
-            </Button>
+            <Row
+                justify="space-between"
+                align="middle"
+                style={{ marginBottom: 16 }}
+                gutter={[16, 16]}
+            >
+                <Col>
+                    <Button
+                        type="link"
+                        icon={<ArrowLeftOutlined />}
+                        onClick={() => navigate('/events')}
+                    >
+                        返回活动列表
+                    </Button>
+                </Col>
+                <Col>
+                    <Button
+                        type="primary"
+                        size="middle"
+                        onClick={() => setConfirmModalVisible(true)}
+                        style={{
+                            background: 'linear-gradient(45deg, #1890ff, #722ed1)',
+                            borderColor: '#1890ff',
+                            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6
+                        }}
+                    >
+                        立即购票
+                    </Button>
+                </Col>
+            </Row>
 
-            <div style={{ marginTop: 24 }}>
-                <Row gutter={[24, 24]}>
+            <div style={{ marginTop: 16 }}>
+                <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Card>
+                        <Card bodyStyle={{ padding: '16px' }}>
                             <div
                                 style={{
-                                    height: 180,
+                                    height: 150,
                                     background: 'linear-gradient(45deg, #1890ff, #8f41e9)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     color: 'white',
-                                    fontSize: 36,
+                                    fontSize: 32,
                                     fontWeight: 'bold',
-                                    marginBottom: 24,
-                                    borderRadius: 8
+                                    marginBottom: 16,
+                                    borderRadius: 8,
+                                    position: 'relative',
+                                    overflow: 'hidden'
                                 }}
                             >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 16,
+                                        right: 16,
+                                        fontSize: 40,
+                                        opacity: 0.5,
+                                        color: 'rgba(255, 255, 255, 0.8)'
+                                    }}
+                                >
+                                    <CalendarFilled />
+                                </div>
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: 16,
+                                        left: 16,
+                                        fontSize: 24,
+                                        opacity: 0.3,
+                                        color: 'rgba(255, 255, 255, 0.8)'
+                                    }}
+                                >
+                                    <EnvironmentFilled />
+                                </div>
                                 {event.name}
                             </div>
 
                             <Descriptions bordered column={1}>
-                                <Descriptions.Item label={t('events.eventTimeRange')}>
-                                    <CalendarOutlined style={{ marginRight: 8 }} />
-                                    {dayjs(event.date).format('YYYY-MM-DD HH:mm')}
+                                <Descriptions.Item
+                                    label={
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <CalendarFilled style={{ color: '#1890ff', marginRight: 8 }} />
+                                            <span>{t('events.eventTimeRange')}</span>
+                                        </div>
+                                    }
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+                                        <FieldTimeOutlined style={{ color: '#1890ff', fontSize: 18, marginRight: 12 }} />
+                                        <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventStartTime')}:</span>
+                                        {dayjs(event.date).format('YYYY-MM-DD HH:mm')}
+                                    </div>
                                     {event.endDate && (
-                                        <div style={{ marginLeft: 24 }}>
-                                            ~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}
+                                        <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0' }}>
+                                            <ClockCircleOutlined style={{ color: '#52c41a', fontSize: 18, marginRight: 12 }} />
+                                            <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventEndTime')}:</span>
+                                            {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}
                                         </div>
                                     )}
                                 </Descriptions.Item>
-                                <Descriptions.Item label={t('events.eventLocation')}>
-                                    <EnvironmentOutlined style={{ marginRight: 8 }} />
-                                    {event.location}
+                                <Descriptions.Item
+                                    label={
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <EnvironmentFilled style={{ color: '#ff4d4f', marginRight: 8 }} />
+                                            <span>{t('events.eventLocation')}</span>
+                                        </div>
+                                    }
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <EnvironmentFilled style={{ color: '#ff4d4f', fontSize: 18, marginRight: 12 }} />
+                                        <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventLocation')}:</span>
+                                        {event.location}
+                                    </div>
                                 </Descriptions.Item>
                             </Descriptions>
 
@@ -180,24 +258,18 @@ const EventDetail = () => {
                                     </Row>
                                 </>
                             )}
-
-                            <div style={{ marginTop: 24, textAlign: 'center' }}>
-                                <Button
-                                    type="primary"
-                                    size="large"
-                                    icon={<TagOutlined />}
-                                    onClick={() => setConfirmModalVisible(true)}
-                                >
-                                    立即购票
-                                </Button>
-                            </div>
                         </Card>
                     </Col>
                 </Row>
             </div>
 
             <Modal
-                title={t('events.confirmPurchase', '确认购票')}
+                title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <TagOutlined style={{ color: '#1890ff', fontSize: 18 }} />
+                        <span>{t('events.confirmPurchase', '确认购票')}</span>
+                    </div>
+                }
                 open={confirmModalVisible}
                 onCancel={() => setConfirmModalVisible(false)}
                 footer={[
@@ -209,18 +281,59 @@ const EventDetail = () => {
                         type="primary"
                         loading={buyingTicket}
                         onClick={handleBuyTicket}
+                        style={{
+                            background: 'linear-gradient(45deg, #1890ff, #722ed1)',
+                            borderColor: '#1890ff',
+                            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6
+                        }}
                     >
+                        <div style={{
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '50%',
+                            width: 24,
+                            height: 24,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <TagOutlined style={{ fontSize: 14 }} />
+                        </div>
                         {t('events.confirmPurchase', '确认购票')}
                     </Button>,
                 ]}
             >
-                <p>{t('events.confirmPurchaseText', '您确定要购买')} <Text strong>{event.name}</Text> {t('events.confirmPurchaseTicket', '的门票吗？')}</p>
-                <p>{t('events.eventTime')}: {dayjs(event.date).format('YYYY-MM-DD HH:mm')}
+                <p>{t('events.confirmPurchaseText', '您确定要购买')} <Text strong style={{ color: '#1890ff' }}>{event.name}</Text> {t('events.confirmPurchaseTicket', '的门票吗？')}</p>
+
+                <div style={{ margin: '16px 0', border: '1px dashed #d9d9d9', padding: '16px', borderRadius: '8px', background: '#fafafa' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ color: '#1890ff', fontSize: 18, marginRight: 12, display: 'flex', alignItems: 'center' }}>
+                            <FieldTimeOutlined />
+                        </div>
+                        <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventStartTime')}:</span>
+                        <span>{dayjs(event.date).format('YYYY-MM-DD HH:mm')}</span>
+                    </div>
+
                     {event.endDate && (
-                        <span> ~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                            <div style={{ color: '#52c41a', fontSize: 18, marginRight: 12, display: 'flex', alignItems: 'center' }}>
+                                <ClockCircleOutlined />
+                            </div>
+                            <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventEndTime')}:</span>
+                            <span>{dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</span>
+                        </div>
                     )}
-                </p>
-                <p>{t('events.eventLocation')}: {event.location}</p>
+
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ color: '#ff4d4f', fontSize: 18, marginRight: 12, display: 'flex', alignItems: 'center' }}>
+                            <EnvironmentFilled />
+                        </div>
+                        <span style={{ fontWeight: 'bold', marginRight: 8 }}>{t('events.eventLocation')}:</span>
+                        <span>{event.location}</span>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

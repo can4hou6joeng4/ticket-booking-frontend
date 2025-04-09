@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Row, Col, Button, Typography, Spin, Empty, Tag, Modal, Form, Input, DatePicker, message, Popconfirm, Table, Tooltip, Space, Alert } from 'antd';
-import { CalendarOutlined, EnvironmentOutlined, PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, ReloadOutlined, ClockCircleOutlined, EnvironmentFilled, CalendarFilled, FieldTimeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { eventAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -232,8 +232,8 @@ const EventList = () => {
     // 渲染管理员视图
     const renderAdminView = () => (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
-                <Title level={2}>{t('events.title')}</Title>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                <Title level={2} style={{ fontSize: '24px', marginBottom: 0 }}>{t('events.title')}</Title>
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -247,7 +247,7 @@ const EventList = () => {
             </div>
 
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: 100 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', padding: 50 }}>
                     <Spin size="large" />
                 </div>
             ) : events.length === 0 ? (
@@ -258,6 +258,7 @@ const EventList = () => {
                     columns={columns}
                     rowKey="id"
                     pagination={{ pageSize: 10 }}
+                    size="middle"
                 />
             )}
         </>
@@ -266,12 +267,12 @@ const EventList = () => {
     // 渲染用户视图
     const renderUserView = () => (
         <>
-            <div style={{ marginBottom: 24 }}>
-                <Title level={2}>{t('events.title')}</Title>
+            <div style={{ marginBottom: 16 }}>
+                <Title level={2} style={{ fontSize: '24px', marginBottom: 0 }}>{t('events.title')}</Title>
             </div>
 
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: 100 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', padding: 50 }}>
                     <Spin size="large" />
                 </div>
             ) : events.length === 0 ? (
@@ -283,20 +284,34 @@ const EventList = () => {
                             <Card
                                 hoverable
                                 style={{ height: '100%' }}
+                                bodyStyle={{ padding: '16px 12px' }}
                                 onClick={() => handleViewEvent(event.id)}
                                 cover={
                                     <div
                                         style={{
-                                            height: 120,
+                                            height: 100,
                                             background: 'linear-gradient(45deg, #1890ff, #8f41e9)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             color: 'white',
-                                            fontSize: 24,
-                                            fontWeight: 'bold'
+                                            fontSize: 22,
+                                            fontWeight: 'bold',
+                                            position: 'relative',
+                                            overflow: 'hidden'
                                         }}
                                     >
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                top: 10,
+                                                right: 10,
+                                                fontSize: 32,
+                                                opacity: 0.7
+                                            }}
+                                        >
+                                            <CalendarFilled />
+                                        </div>
                                         {event.name}
                                     </div>
                                 }
@@ -314,19 +329,36 @@ const EventList = () => {
                                 ]}
                             >
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                    <div>
-                                        <CalendarOutlined style={{ marginRight: 8 }} />
-                                        <Text>{dayjs(event.date).format('YYYY-MM-DD HH:mm')}</Text>
-                                        {event.endDate && (
-                                            <>
-                                                <br />
-                                                <Text style={{ marginLeft: 24 }}>~ {dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</Text>
-                                            </>
-                                        )}
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                        <div style={{ color: '#1890ff', fontSize: 18, marginTop: 2 }}>
+                                            <FieldTimeOutlined />
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: 'bold', marginBottom: 2 }}>{t('events.eventStartTime')}</div>
+                                            <Text>{dayjs(event.date).format('YYYY-MM-DD HH:mm')}</Text>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <EnvironmentOutlined style={{ marginRight: 8 }} />
-                                        <Text>{event.location}</Text>
+
+                                    {event.endDate && (
+                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                            <div style={{ color: '#52c41a', fontSize: 18, marginTop: 2 }}>
+                                                <ClockCircleOutlined />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontWeight: 'bold', marginBottom: 2 }}>{t('events.eventEndTime')}</div>
+                                                <Text>{dayjs(event.endDate).format('YYYY-MM-DD HH:mm')}</Text>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                        <div style={{ color: '#ff4d4f', fontSize: 18, marginTop: 2 }}>
+                                            <EnvironmentFilled />
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: 'bold', marginBottom: 2 }}>{t('events.eventLocation')}</div>
+                                            <Text>{event.location}</Text>
+                                        </div>
                                     </div>
                                 </div>
                             </Card>
@@ -359,7 +391,7 @@ const EventList = () => {
                     }
                     type="error"
                     showIcon
-                    style={{ marginBottom: 16 }}
+                    style={{ marginBottom: 12 }}
                 />
             )}
 
@@ -509,7 +541,7 @@ const EventList = () => {
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit" loading={submitting} block>
-                            {t('common.update')}
+                            {t('events.editEvent')}
                         </Button>
                     </Form.Item>
                 </Form>
@@ -518,4 +550,4 @@ const EventList = () => {
     );
 };
 
-export default EventList; 
+export default EventList;

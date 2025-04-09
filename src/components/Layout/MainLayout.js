@@ -103,12 +103,6 @@ const HeaderLeft = styled.div`
   align-items: center;
 `;
 
-const DateDisplay = styled(Text)`
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const HeaderRight = styled.div`
   display: flex;
   align-items: center;
@@ -134,19 +128,19 @@ const DesktopMenuButton = styled(Button)`
 `;
 
 const StyledContent = styled(Content)`
-  margin: 24px;
+  margin: 12px 24px;
   border-radius: 8px;
-  padding: 24px;
+  padding: 16px 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   
   @media (max-width: 768px) {
-    margin: 16px;
-    padding: 16px;
+    margin: 8px 16px;
+    padding: 12px 16px;
   }
   
   @media (max-width: 576px) {
-    margin: 10px;
-    padding: 10px;
+    margin: 6px 10px;
+    padding: 8px 10px;
   }
 `;
 
@@ -242,7 +236,6 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isAdmin = user && user.role === 'admin';
-  const [currentTime, setCurrentTime] = useState(new Date());
 
   // i18n国际化钩子
   const { t, i18n } = useTranslation();
@@ -257,23 +250,6 @@ const MainLayout = () => {
       setCollapsed(true);
     }
   }, [isMobile]);
-
-  // 更新当前时间
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000); // 每分钟更新一次
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatDate = (date) => {
-    return date.toLocaleDateString(language, {
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    });
-  };
 
   const handleLogout = async () => {
     try {
@@ -450,9 +426,6 @@ const MainLayout = () => {
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
               />
-              <DateDisplay>
-                {formatDate(currentTime)}
-              </DateDisplay>
             </HeaderLeft>
 
             <HeaderRight>
