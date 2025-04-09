@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import styled from '@emotion/styled';
 import { statisticsAPI } from '../services/api';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +30,7 @@ const WelcomeCard = styled.div`
   margin-bottom: 24px;
   padding: 24px;
   border-radius: 8px;
-  background: white;
+  background: ${props => props.theme === 'dark' ? '#1f1f1f' : 'white'};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   justify-content: space-between;
   align-items: flex-start;
@@ -54,7 +55,7 @@ const Avatar = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #f0f2f5;
+  background: ${props => props.theme === 'dark' ? '#2a2a2a' : '#f0f2f5'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +65,7 @@ const Avatar = styled.div`
 
 const WelcomeContent = styled.div`
   h1 {
-    color: #1f1f1f;
+    color: ${props => props.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#1f1f1f'};
     margin-bottom: 4px;
     font-size: 20px;
     font-weight: 500;
@@ -78,7 +79,7 @@ const WelcomeContent = styled.div`
     }
   }
   p {
-    color: #666;
+    color: ${props => props.theme === 'dark' ? 'rgba(255, 255, 255, 0.45)' : '#666'};
     margin: 0;
     font-size: 14px;
   }
@@ -101,14 +102,14 @@ const StatItem = styled.div`
   
   .label {
     font-size: 14px;
-    color: #666;
+    color: ${props => props.theme === 'dark' ? 'rgba(255, 255, 255, 0.45)' : '#666'};
     margin-bottom: 4px;
   }
   
   .value {
     font-size: 28px;
     font-weight: 600;
-    color: #1f1f1f;
+    color: ${props => props.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#1f1f1f'};
     line-height: 1.2;
   }
   
@@ -201,13 +202,11 @@ const FeatureCard = styled(Card)`
   cursor: pointer;
   transition: all 0.3s;
   
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
+  background: ${props => props.theme === 'dark' ? '#1f1f1f' : 'white'};
   
   .ant-card-body {
     padding: 24px;
+    background: ${props => props.theme === 'dark' ? '#1f1f1f' : 'white'};
     
     @media (max-width: 576px) {
       padding: 16px;
@@ -217,6 +216,7 @@ const FeatureCard = styled(Card)`
   .feature-icon {
     font-size: 32px;
     margin-bottom: 16px;
+    color: ${props => props.theme === 'dark' ? '#177ddc' : 'inherit'};
     
     @media (max-width: 768px) {
       font-size: 28px;
@@ -228,9 +228,16 @@ const FeatureCard = styled(Card)`
       margin-bottom: 8px;
     }
   }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: ${props => props.theme === 'dark' ? '0 5px 15px rgba(0, 0, 0, 0.3)' : '0 5px 15px rgba(0, 0, 0, 0.1)'};
+  }
 `;
 
 const ResponsiveTitle = styled(Title)`
+  color: ${props => props.theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'inherit'};
+  
   @media (max-width: 768px) {
     font-size: 18px !important;
     margin-bottom: 12px !important;
@@ -298,16 +305,16 @@ const QuickActionButton = styled.div`
 `;
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { t } = useTranslation();
-  const isAdmin = user && user.role === 'admin';
-  const [loading, setLoading] = useState(true);
+  const { user, isAdmin } = useAuth();
+  const { theme } = useTheme();
+  const navigate = useNavigate();
   const [statistics, setStatistics] = useState({
     eventCount: 0,
     ticketCount: 0,
     validationCount: 0
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchStatistics();
@@ -370,43 +377,41 @@ const Home = () => {
     }
   ];
 
-  const featuresAdmin = [
-    {
-      title: t('home.features.eventManagement'),
-      icon: <AppstoreOutlined style={{ color: '#1677ff' }} />,
-      description: t('home.features.eventManagementDesc'),
-      onClick: () => navigate('/events')
-    },
-    {
-      title: t('home.features.ticketValidation'),
-      icon: <QrcodeOutlined style={{ color: '#52c41a' }} />,
-      description: t('home.features.ticketValidationDesc'),
-      onClick: () => navigate('/validate')
-    },
-    {
-      title: t('home.features.stats'),
-      icon: <BarChartOutlined style={{ color: '#722ed1' }} />,
-      description: t('home.features.statsDesc'),
-      onClick: () => navigate('/statistics')
-    }
-  ];
-
-  const featuresUser = [
-    {
-      title: t('home.features.browseEvents'),
-      icon: <CalendarOutlined style={{ color: '#1677ff' }} />,
-      description: t('home.features.browseEventsDesc'),
-      onClick: () => navigate('/events')
-    },
-    {
-      title: t('home.features.myTickets'),
-      icon: <TagOutlined style={{ color: '#52c41a' }} />,
-      description: t('home.features.myTicketsDesc'),
-      onClick: () => navigate('/tickets')
-    }
-  ];
-
-  const features = isAdmin ? featuresAdmin : featuresUser;
+  const features = isAdmin
+    ? [
+      {
+        title: t('home.features.eventManagement'),
+        icon: <AppstoreOutlined style={{ color: '#1677ff' }} />,
+        description: t('home.features.eventManagementDesc'),
+        onClick: () => navigate('/events')
+      },
+      {
+        title: t('home.features.ticketValidation'),
+        icon: <QrcodeOutlined style={{ color: '#52c41a' }} />,
+        description: t('home.features.ticketValidationDesc'),
+        onClick: () => navigate('/validate')
+      },
+      {
+        title: t('home.features.stats'),
+        icon: <BarChartOutlined style={{ color: '#722ed1' }} />,
+        description: t('home.features.statsDesc'),
+        onClick: () => navigate('/statistics')
+      }
+    ]
+    : [
+      {
+        title: t('home.features.browseEvents'),
+        icon: <CalendarOutlined style={{ color: '#1677ff' }} />,
+        description: t('home.features.browseEventsDesc'),
+        onClick: () => navigate('/events')
+      },
+      {
+        title: t('home.features.myTickets'),
+        icon: <TagOutlined style={{ color: '#52c41a' }} />,
+        description: t('home.features.myTicketsDesc'),
+        onClick: () => navigate('/tickets')
+      }
+    ];
 
   const systemFeatures = [
     {
@@ -428,22 +433,22 @@ const Home = () => {
 
   return (
     <PageContainer>
-      <WelcomeCard>
+      <WelcomeCard theme={theme}>
         <WelcomeLeft>
-          <Avatar>
+          <Avatar theme={theme}>
             {user?.email?.split('@')[0]?.charAt(0)?.toUpperCase() || 'U'}
           </Avatar>
-          <WelcomeContent>
+          <WelcomeContent theme={theme}>
             <h1>{t('home.welcomeMessage', { name: user?.email?.split('@')[0] || 'User' })}</h1>
             <p>{t('home.weatherInfo')}</p>
           </WelcomeContent>
         </WelcomeLeft>
         <StatsBar>
-          <StatItem>
+          <StatItem theme={theme}>
             <div className="label">{t('home.stats.eventCount')}</div>
             <div className="value">{statistics.eventCount || 0}</div>
           </StatItem>
-          <StatItem>
+          <StatItem theme={theme}>
             <div className="label">{t('home.stats.pendingValidation')}</div>
             <div className="value">{statistics.validationCount || 0}/{statistics.ticketCount || 0}</div>
           </StatItem>
@@ -484,32 +489,32 @@ const Home = () => {
       </StatsContainer>
 
       {/* 功能卡片 */}
-      <ResponsiveTitle level={4} style={{ marginBottom: 16 }}>
+      <ResponsiveTitle level={4} style={{ marginBottom: 16 }} theme={theme}>
         {isAdmin ? t('home.features.admin') : t('home.features.user')}
       </ResponsiveTitle>
       <ResponsiveRow gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {features.map((feature, index) => (
           <ResponsiveCol xs={24} sm={12} md={8} key={index}>
-            <FeatureCard onClick={feature.onClick} hoverable>
+            <FeatureCard onClick={feature.onClick} hoverable theme={theme}>
               <div className="feature-icon">{feature.icon}</div>
-              <ResponsiveTitle level={4}>{feature.title}</ResponsiveTitle>
-              <Text type="secondary">{feature.description}</Text>
+              <ResponsiveTitle level={4} theme={theme}>{feature.title}</ResponsiveTitle>
+              <Text type={theme === 'dark' ? 'secondary' : undefined} style={{ color: theme === 'dark' ? 'rgba(255, 255, 255, 0.45)' : undefined }}>{feature.description}</Text>
             </FeatureCard>
           </ResponsiveCol>
         ))}
       </ResponsiveRow>
 
       {/* 系统特点 */}
-      <ResponsiveTitle level={4} style={{ marginBottom: 16 }}>
+      <ResponsiveTitle level={4} style={{ marginBottom: 16 }} theme={theme}>
         {t('home.systemFeatures.title')}
       </ResponsiveTitle>
       <ResponsiveRow gutter={[16, 16]}>
         {systemFeatures.map((feature, index) => (
           <ResponsiveCol xs={24} sm={12} md={8} key={index}>
-            <FeatureCard hoverable>
+            <FeatureCard hoverable theme={theme}>
               <div className="feature-icon">{feature.icon}</div>
-              <ResponsiveTitle level={4}>{feature.title}</ResponsiveTitle>
-              <Text type="secondary">{feature.description}</Text>
+              <ResponsiveTitle level={4} theme={theme}>{feature.title}</ResponsiveTitle>
+              <Text type={theme === 'dark' ? 'secondary' : undefined} style={{ color: theme === 'dark' ? 'rgba(255, 255, 255, 0.45)' : undefined }}>{feature.description}</Text>
             </FeatureCard>
           </ResponsiveCol>
         ))}
