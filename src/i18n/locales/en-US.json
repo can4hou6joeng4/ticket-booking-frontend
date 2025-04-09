@@ -129,6 +129,7 @@
         "usedTime": "Used Time",
         "viewTicketCode": "View Ticket Code",
         "ticketUsed": "Used",
+        "alreadyUsed": "This ticket has already been used and cannot be viewed again",
         "status": {
             "used": "Used",
             "unused": "Unused"

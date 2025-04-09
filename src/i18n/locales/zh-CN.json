@@ -130,6 +130,7 @@
         "usedTime": "使用时间",
         "viewTicketCode": "查看票券码",
         "ticketUsed": "已使用",
+        "alreadyUsed": "此票券已使用，无法再次查看",
         "status": {
             "used": "已使用",
             "unused": "未使用"

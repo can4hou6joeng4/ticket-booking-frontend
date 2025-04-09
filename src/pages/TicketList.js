@@ -110,8 +110,12 @@ const TicketList = () => {
         return <Badge status="processing" text={<Tag color="blue">{t('tickets.status.unused')}</Tag>} />;
     };
 
-    const handleViewTicket = (ticketId) => {
-        navigate(`/tickets/${ticketId}`);
+    const handleViewTicket = (ticket) => {
+        if (ticket.entered) {
+            message.info(t('tickets.alreadyUsed'));
+            return;
+        }
+        navigate(`/tickets/${ticket.id}`);
     };
 
     const formatDate = (dateString) => {
@@ -151,7 +155,7 @@ const TicketList = () => {
                     <List.Item>
                         <StyledCard
                             hoverable
-                            onClick={() => handleViewTicket(ticket.id)}
+                            onClick={() => handleViewTicket(ticket)}
                             title={
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text strong style={{ fontSize: '16px' }}>{ticket.event?.name || t('tickets.unknownEvent')}</Text>
@@ -188,7 +192,7 @@ const TicketList = () => {
                                         icon={<QrcodeOutlined />}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleViewTicket(ticket.id);
+                                            handleViewTicket(ticket);
                                         }}
                                         block
                                     >

@@ -125,6 +125,7 @@
         },
         "viewTicketCode": "查看票券碼",
         "ticketUsed": "票券已使用",
+        "alreadyUsed": "此票券已使用，無法再次查看",
         "loadError": "獲取票券失敗",
         "empty": "您還沒有購買任何票券",
         "browseEvents": "瀏覽活動並購票",
